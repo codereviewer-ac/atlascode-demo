@@ -14,7 +14,7 @@ import {
 import React, { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { CommonAction, CommonActionType } from '../../../../lib/ipc/fromUI/common';
-import { FeedbackData, FeedbackType, FeedbackUser, FeaturePriority } from '../../../../lib/ipc/models/common';
+import { FeedbackData, FeedbackType, FeedbackUser } from '../../../../lib/ipc/models/common';
 import { PostMessageFunc } from '../../messagingApi';
 type FeedbackDialogButtonProps = {
     user: FeedbackUser;
@@ -28,7 +28,7 @@ export const FeedbackDialogButton: React.FunctionComponent<FeedbackDialogButtonP
         mode: 'onChange',
     });
 
-    const watches = watch(['canBeContacted', 'type']);
+    const watches = watch(['canBeContacted']);
 
     const submitForm = useCallback(
         (data: FeedbackData) => {
@@ -50,12 +50,6 @@ export const FeedbackDialogButton: React.FunctionComponent<FeedbackDialogButtonP
     const handleOpenDialog = useCallback(() => {
         setFormOpen(true);
     }, []);
-
-    const featureRequestMenuItems = [
-        { text: 'Nice to have', value: FeaturePriority.NiceToHave },
-        { text: 'Important', value: FeaturePriority.Important },
-        { text: 'Critical', value: FeaturePriority.Critical },
-    ];
 
     return (
         <>
@@ -94,9 +88,6 @@ export const FeedbackDialogButton: React.FunctionComponent<FeedbackDialogButtonP
                                 </MenuItem>
                                 <MenuItem key={FeedbackType.Suggestion} value={FeedbackType.Suggestion}>
                                     Suggest an improvement
-                                </MenuItem>
-                                <MenuItem key={FeedbackType.Suggestion} value={FeedbackType.Suggestion}>
-                                    Request a feature
                                 </MenuItem>
                             </TextField>
                         </Grid>
@@ -168,31 +159,6 @@ export const FeedbackDialogButton: React.FunctionComponent<FeedbackDialogButtonP
                                         required: 'Your contact email is required',
                                     })}
                                 />
-                            )}
-                        </Grid>
-                        <Grid item>
-                            {watches.type === FeedbackType.Feature && (
-                                <TextField
-                                    name="featurePriority"
-                                    defaultValue={FeaturePriority.Important}
-                                    select
-                                    required
-                                    autoFocus
-                                    autoComplete="off"
-                                    margin="dense"
-                                    id="featurePriority"
-                                    label="Feature Priority"
-                                    helperText={errors.featurePriority ? errors.featurePriority.message : undefined}
-                                    fullWidth
-                                    error={!!errors.featurePriority}
-                                    inputRef={register}
-                                >
-                                    {featureRequestMenuItems.forEach((item) => (
-                                        <MenuItem key={item.value} value={item.value}>
-                                            {item.text}
-                                        </MenuItem>
-                                    ))}
-                                </TextField>
                             )}
                         </Grid>
                     </Grid>
