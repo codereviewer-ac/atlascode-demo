@@ -1,0 +1,58 @@
+# Allowed:
+# build/
+# resources/
+# images/
+# LICENSE
+
+__mocks__/
+.generated/
+e2e/
+.npm/
+
+.env
+.env.example
+.eslintignore
+.mocharc.js
+.nvmrc
+.prettierignore
+CODEOWNERS
+HOMEPAGE.md
+changelog.md
+nightlyver.sh
+package.json
+readme.md
+setupTests.js
+tsconfig.notest.json
+tsconfig.ui-test.json
+ui-test-settings.json
+vscode-stylenames.txt
+.devcontainer/
+.github/
+coverage/
+scripts/
+
+.vscode/**
+.vscode-test/**
+out/test/**
+out/**/*.map
+src/**
+patches/**
+.gitignore
+bitbucket-pipelines.yml
+*.pem
+*.vsix
+tsconfig.json
+tsconfig.webpack.json
+tslint.json
+node_modules/**
+yarn.lock
+yarn-error.log
+webpack.*
+build/**/*.map
+.readme/**
+dataportal.yaml
+devhtml/**
+.yalc/**
+.storybook/**
+jest.config.js
+.test-extensions/** 
