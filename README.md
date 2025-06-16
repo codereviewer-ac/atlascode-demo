@@ -7,6 +7,11 @@ Stay in the flow by using Atlassian for VSCode to start work on a JIRA issue, ra
 
 [**Download now**](https://marketplace.visualstudio.com/items?itemName=Atlassian.atlascode&ssr=false#overview)
 
+# blah blah
+This is something here
+
+# Permissions
+You need admin permissions to run this repository
 
 ## Usage
 
