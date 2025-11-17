@@ -22,6 +22,8 @@ For more information, see [Getting started with VS Code](https://confluence.atla
 
 **Note:** Jira Service Desk projects are not fully supported at this time.
 
+blah blah test
+
 ### Features at a Glance
 
 Here's a quick peek at a developer's workflow:
