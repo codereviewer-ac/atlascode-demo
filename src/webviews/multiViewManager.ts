@@ -24,23 +24,45 @@ export abstract class AbstractMultiViewManager<T> implements Disposable {
     // e.g. create or show a webview for this PR.
     public async createOrShow(data: T) {
         const key = this.dataKey(data);
-        const view = this._viewMap.get(key) || this.createView(this._extensionPath);
+        let view = this._viewMap.get(key);
+        
+        // If view already exists, just update it
+        if (view) {
+            await view.createOrShow();
+            if (isInitializable(view)) {
+                view.initialize(data);
+            }
+            return;
+        }
+
+        // Create new view
+        view = this.createView(this._extensionPath);
+
+        // Dispose old listener if it exists (prevents memory leaks)
+        const oldListener = this._listeners.get(key);
+        if (oldListener) {
+            oldListener.dispose();
+        }
 
         // We listen for panel dispose events from the webview so we can dispose of them and remove them from this manager
         // as their displayable panels come and go.
-        this._listeners.set(
-            key,
-            view.onDidPanelDispose()(() => {
-                const view = this._viewMap.get(key);
+        const newListener = view.onDidPanelDispose()(() => {
+            const disposedView = this._viewMap.get(key);
 
-                if (view) {
-                    view.dispose();
-                    this._viewMap.delete(key);
-                }
+            if (disposedView) {
+                disposedView.dispose();
+                this._viewMap.delete(key);
+            }
 
-                this._listeners.delete(key);
-            }, this),
-        );
+            // Clean up listener reference
+            const listener = this._listeners.get(key);
+            if (listener) {
+                listener.dispose();
+            }
+            this._listeners.delete(key);
+        }, this);
+
+        this._listeners.set(key, newListener);
         this._viewMap.set(key, view);
 
         await view.createOrShow();
