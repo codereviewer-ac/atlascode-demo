@@ -5,6 +5,7 @@ import { Container } from '../container';
 import { Logger } from '../logger';
 import { API as GitApi, Repository } from '../typings/git';
 import { CacheMap, Interval } from '../util/cachemap';
+import { CacheManager } from '../util/cacheManager';
 import { BitbucketIssuesExplorer } from '../views/bbissues/bbIssuesExplorer';
 import { PullRequestCommentController } from '../views/pullrequest/prCommentController';
 import { PullRequestsExplorer } from '../views/pullrequest/pullRequestsExplorer';
@@ -22,9 +23,7 @@ export class BitbucketContext extends Disposable {
     private _pullRequestsExplorer: PullRequestsExplorer;
     private _bitbucketIssuesExplorer: BitbucketIssuesExplorer;
     private _disposable: Disposable;
-    private _currentUsers: CacheMap;
-    private _pullRequestCache = new CacheMap();
-    private _mirrorsCache = new CacheMap();
+    private _cacheManager: CacheManager;
     public readonly prCommentController: PullRequestCommentController;
 
     constructor(gitApi: GitApi) {
@@ -32,7 +31,7 @@ export class BitbucketContext extends Disposable {
         this._gitApi = gitApi;
         this._pullRequestsExplorer = new PullRequestsExplorer(this);
         this._bitbucketIssuesExplorer = new BitbucketIssuesExplorer(this);
-        this._currentUsers = new CacheMap();
+        this._cacheManager = CacheManager.getInstance();
 
         Container.context.subscriptions.push(
             Container.siteManager.onDidSitesAvailableChange((e) => {
@@ -57,11 +56,12 @@ export class BitbucketContext extends Disposable {
     }
 
     public async currentUser(site: BitbucketSite): Promise<User> {
-        let foundUser = this._currentUsers.getItem<User>(site.details.host);
+        const userCache = this._cacheManager.getCache('bitbucket-users');
+        let foundUser = userCache.getItem<User>(site.details.host);
         if (!foundUser) {
             const bbClient = await clientForSite(site);
             foundUser = await bbClient.pullrequests.getCurrentUser(site.details)!;
-            this._currentUsers.setItem(site.details.host, foundUser, 10 * Interval.MINUTE);
+            userCache.setItem(site.details.host, foundUser, 10 * Interval.MINUTE);
         }
 
         if (foundUser) {
@@ -72,18 +72,28 @@ export class BitbucketContext extends Disposable {
     }
 
     public async recentPullrequestsForAllRepos(): Promise<PullRequest[]> {
-        if (!this._pullRequestCache.getItem<PullRequest[]>('pullrequests')) {
-            const prs = await Promise.all(
+        const prCache = this._cacheManager.getCache('bitbucket-pullrequests');
+        let cachedPrs = prCache.getItem<PullRequest[]>('pullrequests');
+        
+        if (!cachedPrs) {
+            const prs = await Promise.allSettled(
                 this.getBitbucketRepositories().map(async (repo) => {
                     const bbClient = await clientForSite(repo.mainSiteRemote.site!);
                     return (await bbClient.pullrequests.getRecentAllStatus(repo)).data;
                 }),
             );
-            const flatPrs = prs.reduce((prev, curr) => prev.concat(curr), []);
-            this._pullRequestCache.setItem('pullrequests', flatPrs, 5 * Interval.MINUTE);
+            
+            // Filter out rejected promises and flatten results
+            const flatPrs = prs
+                .filter((result) => result.status === 'fulfilled')
+                .map((result) => (result.status === 'fulfilled' ? result.value : []))
+                .reduce((prev, curr) => prev.concat(curr), []);
+                
+            prCache.setItem('pullrequests', flatPrs, 5 * Interval.MINUTE);
+            cachedPrs = flatPrs;
         }
 
-        return this._pullRequestCache.getItem<PullRequest[]>('pullrequests')!;
+        return cachedPrs!;
     }
 
     private async refreshRepos() {
@@ -91,15 +101,18 @@ export class BitbucketContext extends Disposable {
             return;
         }
 
-        this._pullRequestCache.clear();
+        const prCache = this._cacheManager.getCache('bitbucket-pullrequests');
+        prCache.clear();
         this._repoMap.clear();
 
-        await Promise.all(
+        const mirrorsCache = this._cacheManager.getCache('bitbucket-mirrors');
+        
+        await Promise.allSettled(
             Container.siteManager.getSitesAvailable(ProductBitbucket).map(async (site) => {
                 try {
                     const bbApi = await Container.clientManager.bbClient(site);
                     const mirrorHosts = await bbApi.repositories.getMirrorHosts();
-                    this._mirrorsCache.setItem(site.host, mirrorHosts);
+                    mirrorsCache.setItem(site.host, mirrorHosts);
                 } catch {
                     // log and ignore error
                     Logger.debug('Failed to fetch mirror sites');
@@ -172,7 +185,8 @@ export class BitbucketContext extends Disposable {
     }
 
     public getMirrors(hostname: string): string[] {
-        return this._mirrorsCache.getItem<string[]>(hostname) || [];
+        const mirrorsCache = this._cacheManager.getCache('bitbucket-mirrors');
+        return mirrorsCache.getItem<string[]>(hostname) || [];
     }
 
     dispose() {

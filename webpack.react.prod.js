@@ -30,6 +30,7 @@ module.exports = {
         chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js',
     },
     optimization: {
+        minimize: true,
         minimizer: [
             new CSSMinimizerPlugin({}),
             new TerserPlugin({
@@ -37,6 +38,8 @@ module.exports = {
                 terserOptions: {
                     compress: {
                         comparisons: false,
+                        drop_console: true, // Remove console logs in production
+                        passes: 2,
                     },
                     output: {
                         comments: false,
@@ -46,7 +49,23 @@ module.exports = {
             }),
         ],
         splitChunks: {
+            chunks: 'all',
+            maxInitialRequests: 25,
+            maxAsyncRequests: 25,
+            minSize: 20000,
             cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'vendors',
+                    priority: 10,
+                    reuseExistingChunk: true,
+                },
+                common: {
+                    minChunks: 2,
+                    priority: 5,
+                    reuseExistingChunk: true,
+                    name: 'common',
+                },
                 styles: {
                     name: 'main',
                     test: /\.css$/,
@@ -101,10 +120,9 @@ module.exports = {
         }),
     ],
     performance: {
-        // About twice the default value of 244 Kib, to remove the warning
-        // Shouldn't be a problem since this is an extension
-        maxEntrypointSize: 512000,
-        maxAssetSize: 512000,
+        maxEntrypointSize: 350000, // Target: < 350KB for main bundle (30% reduction from 512KB)
+        maxAssetSize: 350000,
+        hints: 'warning', // Show warnings instead of errors
     },
     watchOptions: {
         ignored: /node_modules/,

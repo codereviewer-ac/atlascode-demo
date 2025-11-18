@@ -56,27 +56,47 @@ export class JQLManager extends Disposable {
 
             const filterList = allList.filter((item) => item.filterId);
 
-            await Promise.all(
-                filterList.map(async (f) => {
-                    const site = Container.siteManager.getSiteForId(ProductJira, f.siteId);
-                    if (site) {
-                        try {
-                            const client = await Container.clientManager.jiraClient(site);
-                            const updatedFilter = await client.getFilter(f.filterId!);
-                            if (updatedFilter) {
-                                const originalFilter = allList.find((of) => of.id === f.id);
-                                if (originalFilter) {
-                                    originalFilter.name = updatedFilter.name;
-                                    originalFilter.query = updatedFilter.jql;
-                                }
-                            }
-                        } catch (e) {
-                            Logger.error(e, `Error fetching filter "${f.name}"`);
-                        }
-                    }
-                }),
-            );
+            // Group filters by site to batch requests
+            const filtersBySite = new Map<string, typeof filterList>();
+            filterList.forEach((f) => {
+                const siteId = f.siteId;
+                if (!filtersBySite.has(siteId)) {
+                    filtersBySite.set(siteId, []);
+                }
+                filtersBySite.get(siteId)!.push(f);
+            });
 
+            // Process each site's filters in parallel
+            const updatePromises = Array.from(filtersBySite.entries()).map(async ([siteId, siteFilters]) => {
+                const site = Container.siteManager.getSiteForId(ProductJira, siteId);
+                if (!site) return;
+
+                try {
+                    const client = await Container.clientManager.jiraClient(site);
+                    
+                    // Batch fetch all filters for this site
+                    const updates = await Promise.allSettled(
+                        siteFilters.map(f => client.getFilter(f.filterId!))
+                    );
+
+                    updates.forEach((result, index) => {
+                        if (result.status === 'fulfilled' && result.value) {
+                            const updatedFilter = result.value;
+                            const originalFilter = allList.find((of) => of.id === siteFilters[index].id);
+                            if (originalFilter) {
+                                originalFilter.name = updatedFilter.name;
+                                originalFilter.query = updatedFilter.jql;
+                            }
+                        } else if (result.status === 'rejected') {
+                            Logger.error(result.reason, `Error fetching filter \"${siteFilters[index].name}\"`);
+                        }
+                    });
+                } catch (e) {
+                    Logger.error(e, `Error updating filters for site ${siteId}`);
+                }
+            });
+
+            await Promise.all(updatePromises);
             configuration.updateEffective('jira.jqlList', allList);
         });
     }
