@@ -10,6 +10,7 @@ const feedbackTypeIds = {
     [FeedbackType.Comment]: '10106',
     [FeedbackType.Suggestion]: '10107',
     [FeedbackType.Question]: '10108',
+    [FeedbackType.FeatureRequest]: '10107', // Using suggestion type ID for feature requests
     [FeedbackType.Empty]: '10107',
 };
 
@@ -27,58 +28,62 @@ export async function submitFeedback(feedback: FeedbackData) {
             Container.siteManager.getSitesAvailable(ProductBitbucket).find((site) => !site.isCloud) !== undefined,
     };
 
-    const payload = {
-        fields: [
-            {
-                id: 'summary',
-                value: `Atlascode: ${truncate(feedback.description.trim().split('\n', 1)[0], {
-                    length: 100,
-                    separator: /,?\s+/,
-                }).trim()}`,
+    const fields = [
+        {
+            id: 'summary',
+            value: `Atlascode: ${truncate(feedback.description.trim().split('\\n', 1)[0], {
+                length: 100,
+                separator: /,?\\s+/,
+            }).trim()}`,
+        },
+        {
+            id: 'description',
+            value: feedback.featurePriority 
+                ? `Priority: ${feedback.featurePriority}\n\n${feedback.description}`
+                : feedback.description,
+        },
+        {
+            // Context (text)
+            id: 'customfield_10047',
+            value: JSON.stringify(context, undefined, 4),
+        },
+        {
+            // Request type (bug/comment/improvement/question)
+            id: 'customfield_10042',
+            value: {
+                id: feedbackTypeIds[feedback.type],
             },
-            {
-                id: 'description',
-                value: feedback.description,
-            },
-            {
-                // Context (text)
-                id: 'customfield_10047',
-                value: JSON.stringify(context, undefined, 4),
-            },
-            {
-                // Request type (bug/comment/improvement/question)
-                id: 'customfield_10042',
-                value: {
-                    id: feedbackTypeIds[feedback.type],
+        },
+        {
+            // User name (text, optional)
+            id: 'customfield_10045',
+            value: feedback.userName,
+        },
+        {
+            // Can be contacted?
+            id: 'customfield_10043',
+            value: [
+                {
+                    id: feedback.canBeContacted ? '10109' : '10111',
                 },
-            },
-            {
-                // User name (text, optional)
-                id: 'customfield_10045',
-                value: feedback.userName,
-            },
-            {
-                // Can be contacted?
-                id: 'customfield_10043',
-                value: [
-                    {
-                        id: feedback.canBeContacted ? '10109' : '10111',
-                    },
-                ],
-            },
-            {
-                id: 'email',
-                value: feedback.emailAddress,
-            },
-            {
-                id: 'components',
-                value: [
-                    {
-                        id: '10097',
-                    },
-                ],
-            },
-        ],
+            ],
+        },
+        {
+            id: 'email',
+            value: feedback.emailAddress,
+        },
+        {
+            id: 'components',
+            value: [
+                {
+                    id: '10097',
+                },
+            ],
+        },
+    ];
+
+    const payload = {
+        fields: fields,
     };
 
     const transport = getAxiosInstance();

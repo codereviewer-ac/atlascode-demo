@@ -14,7 +14,7 @@ import {
 import React, { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { CommonAction, CommonActionType } from '../../../../lib/ipc/fromUI/common';
-import { FeedbackData, FeedbackType, FeedbackUser } from '../../../../lib/ipc/models/common';
+import { FeedbackData, FeedbackType, FeedbackUser, FeaturePriority } from '../../../../lib/ipc/models/common';
 import { PostMessageFunc } from '../../messagingApi';
 type FeedbackDialogButtonProps = {
     user: FeedbackUser;
@@ -28,7 +28,7 @@ export const FeedbackDialogButton: React.FunctionComponent<FeedbackDialogButtonP
         mode: 'onChange',
     });
 
-    const watches = watch(['canBeContacted']);
+    const watches = watch(['canBeContacted', 'type']);
 
     const submitForm = useCallback(
         (data: FeedbackData) => {
@@ -89,6 +89,9 @@ export const FeedbackDialogButton: React.FunctionComponent<FeedbackDialogButtonP
                                 <MenuItem key={FeedbackType.Suggestion} value={FeedbackType.Suggestion}>
                                     Suggest an improvement
                                 </MenuItem>
+                                <MenuItem key={FeedbackType.FeatureRequest} value={FeedbackType.FeatureRequest}>
+                                    Request a feature
+                                </MenuItem>
                             </TextField>
                         </Grid>
                         <Grid item>
@@ -107,6 +110,34 @@ export const FeedbackDialogButton: React.FunctionComponent<FeedbackDialogButtonP
                                 })}
                             />
                         </Grid>
+                        {watches.type === FeedbackType.FeatureRequest && (
+                            <Grid item>
+                                <TextField
+                                    name="featurePriority"
+                                    defaultValue={FeaturePriority.NiceToHave}
+                                    select
+                                    required
+                                    autoComplete="off"
+                                    margin="dense"
+                                    id="featurePriority"
+                                    label="Feature Priority"
+                                    helperText={errors.featurePriority ? errors.featurePriority.message : undefined}
+                                    fullWidth
+                                    error={!!errors.featurePriority}
+                                    inputRef={register}
+                                >
+                                    <MenuItem key={FeaturePriority.NiceToHave} value={FeaturePriority.NiceToHave}>
+                                        Nice to have
+                                    </MenuItem>
+                                    <MenuItem key={FeaturePriority.Important} value={FeaturePriority.Important}>
+                                        Important
+                                    </MenuItem>
+                                    <MenuItem key={FeaturePriority.Critical} value={FeaturePriority.Critical}>
+                                        Critical
+                                    </MenuItem>
+                                </TextField>
+                            </Grid>
+                        )}
                         <Grid item>
                             <TextField
                                 name="userName"
