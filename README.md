@@ -67,6 +67,175 @@ Running and debugging the extension:
 
 
 
+## Permissions
+
+This extension requires specific permissions to integrate with Atlassian products:
+
+### Jira Permissions
+- **Browse Projects**: Required to view and access Jira projects and issues
+- **Create Issues**: Needed to create new issues from VS Code
+- **Edit Issues**: Required to update issue details, add comments, and transition issues
+- **Assign Issues**: Needed to assign issues to team members
+- **Work on Issues**: Required to log work and update issue status
+
+### Bitbucket Permissions
+- **Repository Access**: Required to view repositories, branches, and pull requests
+- **Pull Request Management**: Needed to create, review, and merge pull requests
+- **Pipeline Access**: Required to view and trigger build pipelines
+- **Write Access**: Needed to push branches and create commits
+
+### Authentication
+The extension supports multiple authentication methods:
+- **OAuth 2.0**: Recommended for Atlassian Cloud
+- **Personal Access Tokens (PAT)**: For Bitbucket Server/Data Center
+- **API Tokens**: For Jira Cloud with email authentication
+
+## Local Development
+
+### Prerequisites
+- Node.js 16 or higher
+- VS Code 1.77.0 or above
+- Git
+
+### Setup Instructions
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/atlassian/atlascode.git
+   cd atlascode
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment** (optional):
+   ```bash
+   cp .env.example .env
+   # Edit .env file with your feature flag API keys if needed
+   ```
+
+4. **Build the extension**:
+   ```bash
+   npm run compile
+   ```
+
+5. **Debug in VS Code**:
+   - Copy `.vscode/launch.json.example` to `.vscode/launch.json`
+   - Press F5 or use "Debug and Run" from the Activity Bar
+   - VS Code will launch a new Extension Development Host instance
+
+### Development Workflow
+- **Hot Reload**: Use the debug toolbar ⟲ button to restart after changes
+- **Testing**: Run `npm run test` for unit tests
+- **Linting**: Use `npm run lint` to check code style
+- **Remote Development**: Use Dev Containers for testing remote execution scenarios
+
+## Users
+
+### Target Audience
+This extension is designed for software developers who use Atlassian tools in their workflow:
+
+- **Individual Developers**: Working on personal or small team projects
+- **Enterprise Teams**: Large organizations using Atlassian Cloud or Server products
+- **DevOps Engineers**: Managing CI/CD pipelines and deployments
+- **Project Managers**: Tracking work and managing team collaboration
+
+### User Roles and Capabilities
+
+#### Developer
+- Create and manage Jira issues
+- Start work on issues directly from VS Code
+- Create and review pull requests
+- Trigger and monitor build pipelines
+- View project activity and updates
+
+#### Team Lead/Manager
+- Assign issues to team members
+- Review and approve pull requests
+- Monitor team progress and velocity
+- Manage project workflows and transitions
+
+#### Administrator
+- Configure extension settings for teams
+- Manage authentication and permissions
+- Set up custom JQL queries and filters
+- Configure CI/CD pipeline integrations
+
+### Getting Started for New Users
+1. Install the extension from the VS Code marketplace
+2. Authenticate with your Atlassian accounts via "Atlassian: Open Settings"
+3. Configure your preferred repositories and projects
+4. Start using commands via Command Palette (Ctrl/Cmd+Shift+P → "Atlassian:")
+
+## Analytics
+
+The extension collects anonymized usage analytics to improve the user experience and guide feature development.
+
+### Data Collection
+- **Usage Metrics**: Feature usage, command execution, and user interactions
+- **Performance Data**: Extension load times, operation durations, and error rates
+- **Environment Info**: VS Code version, operating system, and extension version
+- **Error Reporting**: Crash reports and error logs (no personal data included)
+
+### Analytics Implementation
+- Uses Atlassian's internal FX3 analytics platform
+- Implements client-side analytics via `src/analytics.ts`
+- Tracks events like installations, upgrades, and feature usage
+- Supports feature flags for gradual rollouts and A/B testing
+
+### Privacy and Control
+- All data is anonymized and aggregated
+- No personal information or code content is collected
+- Users can provide feedback through in-app forms
+- Analytics help prioritize bug fixes and new features
+
+### Configuration
+Analytics can be configured via environment variables:
+```bash
+ATLASCODE_FX3_API_KEY="your-api-key"
+ATLASCODE_FX3_ENVIRONMENT="production"
+ATLASCODE_FX3_TARGET_APP="atlascode_web"
+```
+
+## Monitoring
+
+### Extension Health
+The extension includes built-in monitoring capabilities to ensure reliable operation:
+
+### Error Handling and Reporting
+- **Automatic Error Capture**: Unhandled exceptions are logged and reported
+- **User Feedback Integration**: In-app feedback forms for issue reporting
+- **Debug Logging**: Comprehensive logging for troubleshooting issues
+- **Performance Monitoring**: Tracking of operation times and resource usage
+
+### Diagnostic Information
+Available through VS Code's built-in tools:
+- **Output Panel**: View extension logs via "View → Output → Atlassian"
+- **Developer Tools**: Access browser dev tools for webview debugging
+- **Command Palette**: Use "Developer: Reload Window" for hard resets
+
+### Health Checks
+- **Authentication Status**: Monitor connection status to Atlassian services
+- **API Rate Limiting**: Automatic handling of rate limits and retries
+- **Network Connectivity**: Detection of offline/online states
+- **Extension Updates**: Automatic notifications for new versions
+
+### Troubleshooting
+Common monitoring and debugging steps:
+1. Check VS Code's Output panel for error messages
+2. Verify authentication status in extension settings
+3. Test network connectivity to Atlassian services
+4. Review extension logs for detailed error information
+5. Use "Developer: Reload Window" to restart the extension
+
+### Performance Metrics
+- Extension activation time
+- API response times for Atlassian services
+- Memory usage and resource consumption
+- User interaction response times
+
 ## Documentation
 
 ### Feature Flags
