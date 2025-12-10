@@ -3,7 +3,14 @@ export enum FeedbackType {
     Comment = 'comment',
     Suggestion = 'suggestion',
     Question = 'question',
+    FeatureRequest = 'feature-request',
     Empty = '',
+}
+
+export enum FeaturePriority {
+    NiceToHave = 'nice-to-have',
+    Important = 'important',
+    Critical = 'critical',
 }
 
 //These IDs uniquely identify webviews for viewScreenEvents
@@ -56,6 +63,7 @@ export interface FeedbackData {
     userName: string;
     emailAddress: string;
     source: string;
+    featurePriority?: FeaturePriority;
 }
 
 export interface FeedbackUser {
