@@ -118,6 +118,38 @@ To see old issues, please first look at [Github](https://github.com/atlassian/at
 **Note for Server/Data Center users:** The extension supports Jira and Bitbucket versions released in the last two years, per our [end of life policy](https://confluence.atlassian.com/x/ewAID).
 You can find your instance's version in the footer of any Jira/Bitbucket page.
 
+## 🍕 Delicious Pizza Recipe
+
+Need fuel for those long coding sessions? Here's a classic Margherita pizza recipe to keep you going!
+
+### Ingredients
+
+**For the dough:**
+- 2¼ tsp (7g) active dry yeast
+- 1 tsp sugar
+- ¾ cup warm water (110°F / 43°C)
+- 2 cups (250g) all-purpose flour
+- 1 tsp salt
+- 1 tbsp olive oil
+
+**For the topping:**
+- ½ cup San Marzano tomato sauce
+- 8 oz (225g) fresh mozzarella, sliced
+- Fresh basil leaves
+- 2 tbsp extra-virgin olive oil
+- Salt and pepper to taste
+
+### Instructions
+
+1. **Make the dough:** Dissolve yeast and sugar in warm water. Let sit for 5–10 minutes until foamy. Mix flour and salt in a large bowl, then add the yeast mixture and olive oil. Knead for 8–10 minutes until smooth and elastic. Cover and let rise for 1 hour.
+2. **Preheat your oven** to the highest setting (ideally 475–500°F / 245–260°C). If you have a pizza stone, place it in the oven while preheating.
+3. **Shape the pizza:** Punch down the dough, then stretch or roll it into a 12-inch round on a floured surface.
+4. **Add toppings:** Spread the tomato sauce evenly over the dough, leaving a ½-inch border. Arrange mozzarella slices on top and drizzle with olive oil.
+5. **Bake** for 10–12 minutes, or until the crust is golden and the cheese is bubbly and slightly charred.
+6. **Finish:** Remove from the oven, top with fresh basil leaves, and season with salt and pepper. Slice and enjoy!
+
+> **Pro tip:** Let the dough cold-ferment in the fridge for 24–72 hours for even more flavor and a better texture. 🤌
+
 ## License
 
 See [LICENSE](LICENSE) file
