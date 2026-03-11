@@ -118,6 +118,41 @@ To see old issues, please first look at [Github](https://github.com/atlassian/at
 **Note for Server/Data Center users:** The extension supports Jira and Bitbucket versions released in the last two years, per our [end of life policy](https://confluence.atlassian.com/x/ewAID).
 You can find your instance's version in the footer of any Jira/Bitbucket page.
 
+## 🍕 Delicious Pizza Recipe
+
+Taking a break from coding? Here's a classic Margherita pizza recipe to fuel your next coding session!
+
+### Ingredients
+
+**For the dough:**
+- 2¼ tsp (7g) active dry yeast
+- 1 cup (240ml) warm water (110°F/43°C)
+- 1 tsp sugar
+- 3 cups (360g) all-purpose flour
+- 2 tbsp olive oil
+- 1 tsp salt
+
+**For the topping:**
+- ½ cup (120ml) San Marzano tomato sauce
+- 8 oz (225g) fresh mozzarella, sliced
+- Fresh basil leaves
+- 2 tbsp extra-virgin olive oil
+- Salt and pepper to taste
+
+### Instructions
+
+1. **Make the dough:** Dissolve yeast and sugar in warm water. Let it sit for 5–10 minutes until foamy. In a large bowl, combine flour and salt. Add the yeast mixture and olive oil, then mix until a dough forms. Knead on a floured surface for 8–10 minutes until smooth and elastic.
+2. **Let it rise:** Place the dough in an oiled bowl, cover with a damp cloth, and let it rise in a warm spot for 1–1.5 hours, or until doubled in size.
+3. **Preheat your oven:** Set your oven to its highest temperature (ideally 475–500°F / 245–260°C). If you have a pizza stone, place it in the oven while it preheats.
+4. **Shape the pizza:** Punch down the dough and roll or stretch it into a 12-inch round on a floured surface. Transfer to a piece of parchment paper or a floured pizza peel.
+5. **Add toppings:** Spread the tomato sauce evenly over the dough, leaving a ½-inch border for the crust. Arrange the mozzarella slices on top. Drizzle with olive oil and season with salt and pepper.
+6. **Bake:** Slide the pizza onto the preheated stone (or place on a baking sheet) and bake for 10–12 minutes, until the crust is golden and the cheese is bubbly with light brown spots.
+7. **Finish & serve:** Remove from the oven, top with fresh basil leaves, slice, and enjoy!
+
+> **Pro tip:** For an extra crispy crust, brush the edges with olive oil before baking. Buon appetito! 🇮🇹
+
+---
+
 ## License
 
 See [LICENSE](LICENSE) file
